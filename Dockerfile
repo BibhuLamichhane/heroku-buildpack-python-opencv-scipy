@@ -1,5 +1,5 @@
 # Base image heroku cedar stack v14
-FROM heroku/cedar:14
+FROM heroku/cedar:22
 
 
 # Make folder structure
@@ -57,16 +57,16 @@ RUN rm -r tcl8.6.6
 RUN rm -r tk8.6.6
 
 
-RUN curl -s -L https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz > Python-2.7.10.tgz
-RUN tar zxvf Python-2.7.10.tgz
-RUN rm Python-2.7.10.tgz
-WORKDIR /app/.heroku/Python-2.7.10
+RUN curl -s -L https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz > Python-3.9.19.tgz
+RUN tar zxvf Python-3.9.19.tgz
+RUN rm Python-3.9.19.tgz
+WORKDIR /app/.heroku/Python-3.9.19
 RUN ./configure --prefix=/app/.heroku/vendor/ --enable-shared --with-tcltk-includes="-I/app/.heroku/vendor/include" --with-tcltk-libs="-L/app/.heroku/vendor/lib -ltcl8.6.6 -L/app/.heroku/vendor/lib -ltk8.6.6"
 RUN make install
 WORKDIR /app/.heroku
-RUN rm -rf Python-2.7.10
+RUN rm -rf Python-3.9.19.tgz
 ENV PATH /app/.heroku/vendor/bin:$PATH
-ENV PYTHONPATH /app/.heroku/vendor/lib/python2.7/site-packages
+ENV PYTHONPATH /app/.heroku/vendor/lib/python3.9/site-packages
 
 
 # Install latest setup-tools and pip
@@ -74,29 +74,16 @@ RUN curl -s -L https://bootstrap.pypa.io/get-pip.py > get-pip.py
 RUN python get-pip.py
 RUN rm get-pip.py
 
-
-# Install Numpy
-RUN pip install -v numpy==1.11.1
-
-
-# Install Scipy
-RUN pip install -v scipy==0.18.0
-
-
-# Install Matplotlib
-RUN pip install -v matplotlib==1.5.3
-
-
 # Install Opencv with python bindings
 RUN apt-get install -y cmake
-RUN curl -s -L https://github.com/Itseez/opencv/archive/2.4.11.zip > opencv-2.4.11.zip
-RUN unzip opencv-2.4.11.zip
-RUN rm opencv-2.4.11.zip
-WORKDIR /app/.heroku/opencv-2.4.11
+RUN curl -s -L https://github.com/opencv/opencv-python/archive/refs/heads/4.x.zip > opencv-python-4.x.zip
+RUN unzip opencv-python-4.x.zip
+RUN rm opencv-python-4.x.zip
+WORKDIR /app/.heroku/opencv-python-4.x.zip
 RUN cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/app/.heroku/vendor -D BUILD_DOCS=OFF -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_EXAMPLES=OFF -D BUILD_opencv_python=ON .
 RUN make install
 WORKDIR /app/.heroku
-RUN rm -rf opencv-2.4.11
+RUN rm -rf opencv-python-4.x
 
 
 # Create vendor package
